@@ -47,9 +47,12 @@ async def extract(url: str = Query(...)):
             'skip_download': True,
             'forcejson': True,
             'simulate': True,
+            'cookiefile': 'www.youtube.com_cookies.txt' 
         }
+
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
-        return JSONResponse(content=info)
+            return JSONResponse(content=info)
+
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
