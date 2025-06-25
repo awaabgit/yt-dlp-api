@@ -36,3 +36,20 @@ def download_audio(url: str = Query(..., description="YouTube video URL")):
         "title": title,
         "audio_url": audio_url
     }
+    
+from fastapi.responses import JSONResponse
+
+@app.get("/extract")
+async def extract(url: str = Query(...)):
+    try:
+        ydl_opts = {
+            'quiet': True,
+            'skip_download': True,
+            'forcejson': True,
+            'simulate': True,
+        }
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=False)
+        return JSONResponse(content=info)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
